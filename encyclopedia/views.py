@@ -1,31 +1,37 @@
+from encyclopedia.models import Note
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from random import choice
 from django.urls import reverse
 import re
 
-
 from . import util
 import encyclopedia
 
 
 def index(request):
+    titles = Note.objects.values_list('title', flat=True)
     return render(request, "encyclopedia/index.html", {
-        "entries": util.list_entries()
+        "titles": titles
     })
 
 
-def wiki(request, title):
-    result = util.get_entry(title)
-    if result == None:
+def library(request, title):
+    try:
+        note = Note.objects.get(title=title)
+    except Note.DoesNotExist:
+        note = None
+
+    if note == None:
         return render(request, "encyclopedia/error.html", {
             "message": "Page do not exist"
         })
 
     else:
+        content = note.content
         return render(request, "encyclopedia/entry.html", {
-            "message": util.convert(result),
-            "title": title
+            "content": util.convert(content),
+            "note": note
         })
 
 
@@ -33,12 +39,16 @@ def search(request):
     if request.method == "POST":
         form = request.POST
         title =  form["q"]
-        result = util.get_entry(title)
-        if result:
-            return redirect('wiki/'+title)
+
+        try:
+            result = Note.objects.get(title=title)
+        except Note.DoesNotExist:
+            result = None
+        if result is not None:
+            return redirect('library/'+title)
         else:
             results = []
-            entries = util.list_entries()
+            entries = Note.objects.values_list('title', flat=True)
             for entry in entries:
                 if re.search(title, entry, re.IGNORECASE):
                     results.append(entry)                
@@ -54,13 +64,18 @@ def add(request):
         form = request.POST
         title = form["title"]
         content = form["content"]
+        name = form["name"]
 
         # Checking if page already exist or not
-        result = util.get_entry(title)
+        try:
+            result = Note.objects.get(title=title)
+        except Note.DoesNotExist:
+            result = None
 
         if result == None:
-            util.save_entry(title, content)
-            return redirect('wiki/'+title)
+            note = Note(title=title, content=content, name=name)
+            note.save()
+            return redirect('library/'+title)
         else:
             return render(request, "encyclopedia/error.html", {
                 "message": "Page already exist",
@@ -72,20 +87,37 @@ def add(request):
 
 def edit(request, title):
     if request.method == "POST":
+        # Deleting previous entry
+        note = Note.objects.get(title=title)
+        note.delete()
+
+        #Saving new entry
         form = request.POST
-        content = form["content"]       
-        util.save_entry(title, content)                
-        return HttpResponseRedirect(reverse("wiki", args=(title,)))
+        content = form["content"]   
+        title = form["title"]    
+        name = form["name"]
+        note = Note(title=title, content=content, name=name)  
+        note.save()             
+        return HttpResponseRedirect(reverse("library", args=(title,)))
     else:
+        note = Note.objects.get(title=title)
         content = util.get_entry(title)
         return render(request, "encyclopedia/edit.html", {
-            "message": content,
-            "title": title
+            "note": note
         })
 
 
-def random(request):
-    # Get a random title from list of entries
-    title = choice(util.list_entries())
-    return redirect('wiki/'+title)
+def guide(request):
+    return render(request, "encyclopedia/guide.html")
       
+
+def allpapers(request):
+    return render(request, "encyclopedia/allpaper.html")
+
+
+def subjectpapers(request, subject):
+    return render(request, "encyclopedia/subjectpaper.html")
+
+
+def papers(request, paper_id):
+    return render(request, "encyclopedia/paper.html")

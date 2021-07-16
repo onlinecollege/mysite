@@ -1,14 +1,16 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    {{ title }}
+    {{ note.title }}
 {% endblock %}
 
 {% block body %}
     
-    {{ message|safe }}
+    {{ content|safe }}
 
-    <form action="{% url 'edit' title %}" method="GET">
+    <p>Last updated by: {{ note.name }} on {{ note.date }}</p>
+
+    <form action="{% url 'edit' note.title %}" method="GET">
         <input type="submit" value="Edit this Page">
     </form>
 

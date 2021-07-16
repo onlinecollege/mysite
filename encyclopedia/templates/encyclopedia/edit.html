@@ -6,11 +6,14 @@
 
 {% block body %}
     
-    <form action="{% url 'edit' title %}" method="POST">
+    <form action="{% url 'edit' note.title %}" method="POST">
         {% csrf_token %}
+        <input type="text" name="title" value="{{ note.title }}">
         <div class="form-floating">
-            <textarea name="content" class="form-control" id="floatingTextarea2" style="height: 400px">{{ message }}</textarea>
+            <textarea name="content" class="form-control" id="floatingTextarea2" style="height: 400px">{{ note.content }}</textarea>
         </div>
+
+        <input type="text" name="name" placeholder="Name">
 
         <br>
 
