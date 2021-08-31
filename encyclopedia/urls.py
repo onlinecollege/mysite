@@ -4,13 +4,12 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("library/<str:title>", views.library, name="library"),
+    path("", views.index, name="index"),   
+    path("addnotes", views.addnotes, name="addnotes"), 
     path("search", views.search, name="search"),
-    path("add", views.add, name="add"),
-    path("edit/<str:title>", views.edit, name="edit"),
-    path("guide", views.guide, name="guide"),
-    path("allpapers", views.allpapers, name="allpapers"),
-    path("allpapers/<str:subject>", views.subjectpapers, name="subjectpapers"),
-    path("papers/<int:paper_id>", views.papers, name="papers"),
+    path("papers", views.paperhome, name="paperhome"),
+    path("searchpaper", views.searchpaper, name="searchpaper"),
+    path("subjectpapers", views.subjectpapers, name="subjectpapers"),
+    path("addpaper", views.addpaper, name="addpaper"),
+    path("contact", views.contact, name="contact")
 ]

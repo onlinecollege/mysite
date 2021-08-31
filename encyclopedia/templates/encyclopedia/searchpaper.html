@@ -1,0 +1,33 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Search Paper
+{% endblock %}
+
+{% block body %} 
+
+<form action="{% url 'searchpaper' %}" method="POST">
+    {% csrf_token %}
+
+    <div class="col-md-6">
+        {{ form.subject|as_crispy_field }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form.year|as_crispy_field }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form.category|as_crispy_field }}
+    </div>
+
+    <div class="col-12">              
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+
+</form>
+    
+
+{% endblock %} 

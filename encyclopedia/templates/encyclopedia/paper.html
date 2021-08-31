@@ -1,0 +1,21 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Paper
+{% endblock %}
+
+{% block body %} 
+
+<!--To be an alert-->
+<div class="alert alert-success" role="alert">
+    {{ message }}
+  </div>
+
+<button type="button" class="btn btn-info">
+    <a href="{{paper.file_url}}" target="_blank"><div><h3>{{paper.title}}</h3>
+    <h4>Subject : {{ paper.subject }}</h4>
+    <h5>{{ paper.category }}, {{ paper.year }}</h5>
+    <h4>Uploaded by : {{ paper.uploader }}</h4></div></a>
+</button>  
+
+{% endblock %} 

@@ -1,0 +1,17 @@
+<!--This page is home to paper site-->
+
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Papers
+{% endblock %}
+
+{% block body %} 
+
+<div class="vstack gap-2 col-md-5 mx-auto">
+    <button type="button" class="btn btn-success"><a href="{% url 'searchpaper' %}"><h1>Search a paper</h1></a></button>
+    <button type="button" class="btn btn-light"><a href="{% url 'subjectpapers' %}"><h1>Subjectwise papers</h1></a></button>
+    <button type="button" class="btn btn-info"><a href="{% url 'addpaper' %}"><h1>Add a paper</h1></a></button>
+  </div>
+
+{% endblock %} 

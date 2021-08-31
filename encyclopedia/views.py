@@ -1,9 +1,11 @@
-from encyclopedia.models import Note
+from encyclopedia.models import Note, Paper
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from random import choice
 from django.urls import reverse
 import re
+
+from .forms import NewPaperForm, SubjectPaperForm, SearchPaperForm, NewNotesForm
 
 from . import util
 import encyclopedia
@@ -13,25 +15,29 @@ def index(request):
     titles = Note.objects.values_list('title', flat=True)
     return render(request, "encyclopedia/index.html", {
         "titles": titles
-    })
+    })          
 
 
-def library(request, title):
-    try:
-        note = Note.objects.get(title=title)
-    except Note.DoesNotExist:
-        note = None
+def addnotes(request):
+    if request.method == "POST":
+        form = request.POST
+        title = form["title"]
+        subject =  form["subject"]
+        source = form["source"]
+        file_url = form["file_url"]
+        your_name = form["your_name"]
 
-    if note == None:
-        return render(request, "encyclopedia/error.html", {
-            "message": "Page do not exist"
+        note = Note(title=title, subject=subject, source=source, your_name=your_name, file_url=file_url)
+        note.save()
+
+        return render(request, "encyclopedia/notes.html", {
+            "note": note,
+            "message": "Notes saved successfully!"
         })
 
     else:
-        content = note.content
-        return render(request, "encyclopedia/entry.html", {
-            "content": util.convert(content),
-            "note": note
+        return render(request, "encyclopedia/addnotes.html", {
+            "form": NewNotesForm
         })
 
 
@@ -39,85 +45,105 @@ def search(request):
     if request.method == "POST":
         form = request.POST
         title =  form["q"]
-
-        try:
-            result = Note.objects.get(title=title)
-        except Note.DoesNotExist:
-            result = None
-        if result is not None:
-            return redirect('library/'+title)
-        else:
-            results = []
-            entries = Note.objects.values_list('title', flat=True)
-            for entry in entries:
-                if re.search(title, entry, re.IGNORECASE):
-                    results.append(entry)                
-            return render(request, "encyclopedia/search.html", {
-                "results": results
-            })
+        
+        # Getting all titles from database and search which title matches to the query
+        notes = []
+        entries = Note.objects.all()
+        for entry in entries:
+            if re.search(title, entry.title, re.IGNORECASE):
+                notes.append(entry)
+                # Get this entry and append into list of objects                
+        return render(request, "encyclopedia/notes.html", {
+            "notes": notes,
+            "message": "Search Results:"
+        })
     else:
         return redirect('index')
 
 
-def add(request):
+      
+#####
+def paperhome(request):
+    return render(request, "encyclopedia/paperhome.html")
+
+
+def searchpaper(request):
     if request.method == "POST":
         form = request.POST
-        title = form["title"]
-        content = form["content"]
-        name = form["name"]
+        subject =  form["subject"]
+        category = form["category"]
+        year = int(form["year"])  
 
-        # Checking if page already exist or not
-        try:
-            result = Note.objects.get(title=title)
-        except Note.DoesNotExist:
-            result = None
-
-        if result == None:
-            note = Note(title=title, content=content, name=name)
-            note.save()
-            return redirect('library/'+title)
-        else:
-            return render(request, "encyclopedia/error.html", {
-                "message": "Page already exist",
-                "title": title
+        # Check if that entry exists
+        if Paper.objects.filter(subject=subject, category=category, year=year).exists():
+             
+            # It  exists
+            paper = Paper.objects.get(subject=subject, category=category, year=year)
+            return render(request, "encyclopedia/paper.html", {
+                "paper": paper,
+                "message": "Paper Found!"
             })
-    else:
-        return render(request, "encyclopedia/add.html")
-            
+        else:
+            # Entry does not exist
+            return render(request, "encyclopedia/error.html", {
+                "message": "Requested paper do not exist."
+            })
 
-def edit(request, title):
-    if request.method == "POST":
-        # Deleting previous entry
-        note = Note.objects.get(title=title)
-        note.delete()
-
-        #Saving new entry
-        form = request.POST
-        content = form["content"]   
-        title = form["title"]    
-        name = form["name"]
-        note = Note(title=title, content=content, name=name)  
-        note.save()             
-        return HttpResponseRedirect(reverse("library", args=(title,)))
     else:
-        note = Note.objects.get(title=title)
-        content = util.get_entry(title)
-        return render(request, "encyclopedia/edit.html", {
-            "note": note
+        return render(request, "encyclopedia/searchpaper.html", {
+            "form": SearchPaperForm
         })
 
 
-def guide(request):
-    return render(request, "encyclopedia/guide.html")
-      
+def subjectpapers(request):
+    if request.method == "POST":
+        form = request.POST
+        subject =  form["subject"] 
 
-def allpapers(request):
-    return render(request, "encyclopedia/allpaper.html")
+        papers = Paper.objects.filter(subject=subject).order_by('-year')
+        return render(request, "encyclopedia/subjectpaper.html", {
+            "papers": papers
+        })
+    else:
+        return render(request, "encyclopedia/searchsubjectpaper.html", {
+            "form": SubjectPaperForm
+        })
+    
+
+def  addpaper(request):
+    if request.method == "POST":
+        form = request.POST
+        title = form["title"]
+        subject =  form["subject"]
+        category = form["category"]
+        year = int(form["year"])
+        file_url = form["file_url"]
+        your_name = form["your_name"]
+
+        # Check if that entry exists
+        if Paper.objects.filter(subject=subject, category=category, year=year).exists():
+             
+            # It  exists
+            return render(request, "encyclopedia/error.html", {
+                "message": "Thank You for your efforts but this paper already exist."
+            })
+
+        else:        
+            paper = Paper(subject=subject, category=category, year=year, title=title, file_url=file_url, uploader=your_name)
+            paper.save()
+            return render(request, "encyclopedia/paper.html", {
+                "message": "Paper added successfully!",
+                "paper": paper
+
+            })
+
+    else:
+        return render(request, "encyclopedia/addpaper.html", {
+            "form" : NewPaperForm
+        })
 
 
-def subjectpapers(request, subject):
-    return render(request, "encyclopedia/subjectpaper.html")
 
 
-def papers(request, paper_id):
-    return render(request, "encyclopedia/paper.html")
+def contact(request):
+    return render(request, "encyclopedia/contact.html")

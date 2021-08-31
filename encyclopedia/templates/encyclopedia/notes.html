@@ -1,0 +1,37 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Notes
+{% endblock %}
+
+{% block body %} 
+<!--To be an alert-->
+<div class="alert alert-success" role="alert">
+    {{ message }}
+  </div>
+
+{% if note %}
+    <button type="button" class="btn btn-info">
+        <a href="{{note.file_url}}" target="_blank"><div><h3>{{note.title}}</h3>
+        <h4>Subject : {{ note.subject }}</h4>
+        <h5>Source : {{ note.source }}</h5>
+        <h5>Uploaded by : {{ note.your_name }}</h5>
+        <h5>Date : {{ note.date }}</h5></div></a></div></a>
+    </button>
+{% endif %}  
+  
+  {% for note in notes %}
+  <button type="button" class="btn btn-info">
+    <a href="{{note.file_url}}" target="_blank"><div><h3>{{note.title}}</h3>
+    <h4>Subject : {{ note.subject }}</h4>
+    <h5>Source : {{ note.source }}</h5>
+    <h5>Uploaded by : {{ note.your_name }}</h5>
+    <h5>Date : {{ note.date }}</h5></div></a>
+</button>
+
+<hr>
+{% empty %}
+  <h3>No matching results</h3>
+{% endfor %}
+
+{% endblock %} 

@@ -1,0 +1,25 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Paper
+{% endblock %}
+
+{% block body %} 
+<h2>Search subject specific Question papers</h2>
+
+<form action="{% url 'subjectpapers' %}" method="POST">
+    {% csrf_token %}
+
+    <div class="col-md-6">
+        {{ form.subject|as_crispy_field }}
+    </div>
+
+    <div class="col-12">              
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+
+</form>    
+
+{% endblock %} 

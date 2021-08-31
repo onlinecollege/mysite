@@ -1,0 +1,51 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Add Notes
+{% endblock %}
+
+{% block body %} 
+<div class="alert alert-success" role="alert">
+    <h3>Add Notes</h3>
+</div>
+<form action="{% url 'addnotes' %}" method="POST" autocomplete="off">
+    {% csrf_token %} 
+
+    <div class="col-12">
+        {{ form.title|as_crispy_field }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form.subject|as_crispy_field }}
+    </div>
+
+    <div class="col-md-6">
+        {{ form.your_name|as_crispy_field }}
+    </div>
+
+    <div class="col-12">
+        {{ form.source|as_crispy_field }}
+    </div>  
+    
+    <div class="alert alert-info" role="alert">
+        Please submit the file below and paste the generated link in the following box
+    </div>
+
+    <iframe id="myIframe" src="https://script.google.com/macros/s/AKfycby7R9aIh6GkPjtIP3a_WmgQeNFRhpAQ1PqmOPnp0ZFyJmBiFPnCi550C5eoudn-qeo/exec" frameborder=False allow="clipboard-read; clipboar-write" height="250" width="370" ></iframe>   
+
+    <div class="alert alert-success" role="alert">
+        Please paste the above generated link in this box
+    </div>
+
+    <div class="col-12">
+        {{ form.file_url|as_crispy_field }}
+    </div>      
+        
+    <div class="col-12">              
+        <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+
+{% endblock %} 

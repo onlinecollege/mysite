@@ -1,0 +1,26 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Subject Paper
+{% endblock %}
+
+{% block body %} 
+
+<div class="alert alert-success" role="alert">
+    <h3>Subjectwise Papers</h3>
+</div>
+
+{% for paper in papers %}
+    <button type="button" class="btn btn-info">
+        <a href="{{paper.file_url}}" target="_blank"><div><h3>{{paper.title}}</h3>
+        <h4>Subject : {{ paper.subject }}</h4>
+        <h5>{{ paper.category }}, {{ paper.year }}</h5>
+        <h4>Uploaded by : {{ paper.uploader }}</h4></div></a>
+    </button>
+    
+    <hr> 
+{% empty %}    
+    <h3>No Paper exist for this subject</h3>
+{% endfor %}
+
+{% endblock %} 

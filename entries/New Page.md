@@ -1,2 +1,0 @@
-#HEADING
-Text goes here

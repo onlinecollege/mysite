@@ -1,16 +1,26 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
-    Encyclopedia
+    Bioscience
 {% endblock %}
 
 {% block body %}
-    <h1>All Pages</h1>
+<div class="alert alert-success" role="alert">
+    <h2>A note to users</h2>
+</div>    
 
-    <ul>
-        {% for title in titles %}
-            <li><a href="{% url 'library' title %}">{{ title }}</a></li>
-        {% endfor %}
-    </ul>
+<p>The idea of creating an online space to share study material came to my mind in 2020 when some of my friends were struggling to find it. Later on, people were asking for previous year papers from time to time. So I wanted to solve this once and for all and started on this endeavour. <br>
+Mankind has Internet for more than 6 decades, but we never used it as effectively as we can. During the time of COVID, our education system crashed. One reason is because we were unprepared even while having all the resources. This caused a sense of disbelief towards internet.</p> 
+
+<p>I was looking to do some non-profit work and strengthen my portfolio (a usual approach by internet entrepreneurs). At first, my approach was to type all the study material to this website but I struggled a lot. I was unable to find material and had only a few helping hands. Later on, I switched the program as a self-help collaborative effort, where everyone will participate in the growth of this venture. <br>
+These moments of collaboration show us how we can use the power of the internet for good. We will achieve this, not as individuals, but as a collaborative movement of knowledge seekers. Together, we can rebuild trust in the internet, and by extension, in each other.</p> 
+
+<p>I’d give credit of this work to Sally and Rizwan, who were always there for me. I’d like to thank all the CS50 staff, Prof. David J. Malan and Brian Yu in particular, who are leading a world changing program to digitalize the world.
+I hope, these efforts help you and lead to many world changing initiatives.</p> 
+<p>Thank You.</p> 
+
+<h5>Sameer Azam</h5>
+
+
 
 {% endblock %}
